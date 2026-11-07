@@ -10,9 +10,9 @@ cd "$BENCH"
 bench --site "$SITE" backup
 rsync -a --exclude node_modules --exclude .git "$SRC/" apps/jalgo_pos/
 (cd apps/jalgo_pos && git init -q && git add -A && git -c user.name=jalgo -c user.email=jalgo@localhost commit -qm "jalgo_pos import")
-grep -qx jalgo_pos sites/apps.txt || printf '\njalgo_pos' >> sites/apps.txt
-sed -i '/^$/d' sites/apps.txt
-./env/bin/pip install -q -e apps/jalgo_pos
+# add to apps.txt (works with both GNU and macOS tools)
+TMP=$(mktemp); { cat sites/apps.txt; echo; echo jalgo_pos; } | grep -v '^$' | awk '!seen[$0]++' > "$TMP" && mv "$TMP" sites/apps.txt
+if [ -x ./env/bin/pip ]; then ./env/bin/pip install -q -e apps/jalgo_pos; else uv pip install -q -e apps/jalgo_pos --python ./env/bin/python; fi
 bench --site "$SITE" install-app jalgo_pos
 bench build --app jalgo_pos
 bench --site "$SITE" clear-cache
