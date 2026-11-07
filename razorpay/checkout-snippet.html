@@ -1,0 +1,39 @@
+<!-- Add to the JALGO website when it is hosted on your own domain (not the preview). -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+// Replace the demo checkout's submit handler with this function.
+async function payWithRazorpay(cartItems, mode, user, address) {
+  // 1) Server prices the cart and creates the Razorpay order
+  const r = await fetch('/api/orders', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ items: cartItems /* [{id, qty}] */, mode })
+  });
+  const data = await r.json();
+  if (!r.ok) { alert(data.error); return; }
+
+  // 2) Open Razorpay's payment window
+  const rzp = new Razorpay({
+    key: data.keyId,              // public key id only, safe in the browser
+    amount: data.amount,
+    currency: 'INR',
+    order_id: data.orderId,
+    name: 'JALGO',
+    description: 'Groceries & daily needs',
+    prefill: { name: user.name, contact: '+91' + user.phone },
+    notes: { address },
+    theme: { color: '#1D5BD8' },
+    handler: async (resp) => {
+      // 3) Server verifies the signature before you show "Order placed"
+      const v = await fetch('/api/payments/verify', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(resp)
+      }).then(x => x.json());
+      if (v.verified) showOrderPlaced(data.orderId);
+      else alert('Payment could not be verified. If money was deducted, it will be refunded.');
+    },
+    modal: { ondismiss: () => console.log('Customer closed the payment window') }
+  });
+  rzp.on('payment.failed', e => alert('Payment failed: ' + e.error.description));
+  rzp.open();
+}
+</script>

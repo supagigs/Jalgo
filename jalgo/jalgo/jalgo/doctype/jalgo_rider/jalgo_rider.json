@@ -1,0 +1,125 @@
+{
+ "actions": [],
+ "allow_bulk_edit": 1,
+ "allow_rename": 1,
+ "autoname": "field:rider_name",
+ "creation": "2026-11-07 13:28:52.189526",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "rider_name",
+  "phone",
+  "status",
+  "is_available",
+  "vehicle",
+  "is_demo"
+ ],
+ "fields": [
+  {
+   "fieldname": "rider_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Rider Name",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "phone",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Phone",
+   "options": "Phone"
+  },
+  {
+   "default": "Active",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Active\nInactive"
+  },
+  {
+   "default": "1",
+   "fieldname": "is_available",
+   "fieldtype": "Check",
+   "label": "Is Available"
+  },
+  {
+   "default": "Bike",
+   "fieldname": "vehicle",
+   "fieldtype": "Select",
+   "label": "Vehicle",
+   "options": "Bike\nScooter\nCycle"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_demo",
+   "fieldtype": "Check",
+   "label": "Is Demo",
+   "read_only": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-11-07 13:28:52.189526",
+ "modified_by": "Administrator",
+ "module": "Jalgo",
+ "name": "JALGO Rider",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "JALGO Ops",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "JALGO Store",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "JALGO Finance",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

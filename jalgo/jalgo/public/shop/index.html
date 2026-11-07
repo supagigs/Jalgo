@@ -1,0 +1,747 @@
+<title>JALGO</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: shopping storefront — sticky header (logo, address, search, cart), offer banners, category tiles, product rails, cart drawer with transparent bill */
+:root{
+  --bg:#F4F6FB; --surface:#FFFFFF; --ink:#14183A; --muted:#5D6382; --line:#E1E6F2;
+  --blue:#1D5BD8; --blue-ink:#1D5BD8; --blue-soft:#E8EFFC; --navy:#14173D; --coral:#FF8A65; --ok:#1E8A5A; --warn:#B4541F;
+  --display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --body:"Figtree",ui-sans-serif,system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0D1024; --surface:#171A35; --ink:#ECEEF8; --muted:#A3A8C6; --line:#2A2E52;
+  --blue-ink:#8DB6FF; --blue-soft:#1E2A55; --ok:#5BD49A; --warn:#FFB08A; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0D1024; --surface:#171A35; --ink:#ECEEF8; --muted:#A3A8C6; --line:#2A2E52;
+  --blue-ink:#8DB6FF; --blue-soft:#1E2A55; --ok:#5BD49A; --warn:#FFB08A; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;margin:0}
+button{font-family:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--coral);outline-offset:2px}
+.wrap{max-width:1240px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance}
+p{margin:0}
+
+/* header */
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--surface)}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--surface);border-bottom:1px solid var(--line)}
+.hbar{display:grid;grid-template-columns:auto auto 1fr auto auto auto auto;align-items:center;gap:20px;padding-block:12px}
+.logo{display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--ink)}
+.logo b{font:800 26px var(--display);letter-spacing:.01em}
+.addr{border:0;background:transparent;text-align:left;color:var(--ink);padding:0 0 0 20px;border-left:1px solid var(--line);min-width:0}
+.addr strong{display:block;font:800 17px var(--display)}
+.addr span{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;max-width:220px}
+.search{display:flex;align-items:center;gap:10px;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:0 14px;min-width:0}
+.search input{flex:1;min-width:0;border:0;background:transparent;color:var(--ink);font:15px var(--body);padding:12px 0}
+.search input:focus{outline:none}
+.search:focus-within{border-color:var(--blue)}
+.login{border:0;background:transparent;color:var(--ink);font-weight:600;font-size:15px}
+.cartbtn{display:flex;align-items:center;gap:10px;background:var(--blue);color:#fff;border:0;border-radius:10px;padding:10px 16px;font-weight:700;min-width:116px;justify-content:center}
+.cartbtn small{display:block;font-weight:600;font-size:12px;line-height:1.2;text-align:left}
+@media(max-width:900px){
+  .hbar{grid-template-columns:auto 1fr auto;gap:12px}
+  .addr{padding-left:12px}
+  .search{grid-column:1/-1;order:5}
+  .login{display:none}
+}
+@media(max-width:480px){.logo b{display:none}.addr span{max-width:150px}}
+
+/* banners */
+.banners{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:16px;padding-block:20px 8px}
+@media(max-width:900px){.banners{grid-template-columns:1fr}}
+.ban{border-radius:20px;padding:24px;display:flex;flex-direction:column;justify-content:space-between;gap:16px;min-height:200px;position:relative;overflow:hidden;color:#fff}
+.ban h2{font-size:clamp(24px,3vw,34px);font-weight:800;letter-spacing:-.02em;line-height:1.05;max-width:16ch}
+.ban p{opacity:.9;max-width:30ch;font-size:14px}
+.ban .go{align-self:flex-start;background:#fff;color:#14183A;border:0;border-radius:10px;padding:9px 16px;font-weight:700}
+.ban.hero{background:var(--navy)}
+.ban.hero h2 span{color:var(--coral)}
+.ban.b2{background:#1D5BD8}
+.ban.b3{background:#E2725B}
+.ban .art{position:absolute;right:-30px;bottom:-30px;opacity:.18}
+.ban.hero .art{opacity:1;right:20px;bottom:20px}
+@media(max-width:600px){.ban.hero .art{display:none}}
+
+/* mode strip */
+.modes{display:flex;flex-wrap:wrap;gap:10px;padding-block:14px 4px}
+.chip{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:8px 14px;font-size:13px;color:var(--muted)}
+.chip b{color:var(--ink)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--ok)}
+
+/* categories */
+section{padding-block:24px}
+.shead{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:14px}
+.shead h2{font-size:24px;font-weight:800;letter-spacing:-.01em}
+.shead button{border:0;background:transparent;color:var(--blue-ink);font-weight:700;font-size:15px}
+.cats{display:grid;grid-template-columns:repeat(10,1fr);gap:12px}
+@media(max-width:1000px){.cats{grid-template-columns:repeat(5,1fr)}}
+@media(max-width:520px){.cats{grid-template-columns:repeat(4,1fr);gap:8px}}
+.cat{border:0;background:transparent;color:var(--ink);display:flex;flex-direction:column;align-items:center;gap:6px;padding:0;min-width:0}
+.cat .tile{width:100%;aspect-ratio:1/1;max-width:100%;border-radius:16px;background:var(--blue-soft);display:flex;align-items:center;justify-content:center;border:2px solid transparent;transition:transform .15s}
+.cat[aria-pressed="true"] .tile{border-color:var(--blue)}
+.cat:hover .tile{transform:translateY(-2px)}
+.cat .tile svg{width:72%;height:72%}
+.cat span{font-size:12.5px;font-weight:600;text-align:center;line-height:1.25}
+
+/* product rails */
+.rail{display:grid;grid-auto-flow:column;grid-auto-columns:180px;gap:14px;overflow-x:auto;padding-bottom:8px;scroll-snap-type:x mandatory}
+.rail::-webkit-scrollbar{height:6px}.rail::-webkit-scrollbar-thumb{background:var(--line);border-radius:3px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:6px;scroll-snap-align:start;min-width:0}
+.card .img{aspect-ratio:1/1;max-width:100%;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:4px}
+.card .img svg{width:74%;height:74%}
+.eta{align-self:flex-start;display:inline-flex;align-items:center;gap:4px;background:var(--bg);border-radius:6px;padding:2px 6px;font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.card h3{font:600 14px/1.3 var(--body);min-height:2.6em;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.qty{font-size:13px;color:var(--muted)}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:auto;padding-top:6px}
+.price{font-weight:700;font-variant-numeric:tabular-nums}
+.price s{display:block;font-weight:400;font-size:12px;color:var(--muted)}
+.add{border:1.5px solid var(--blue);background:var(--blue-soft);color:var(--blue-ink);border-radius:8px;font-weight:800;font-size:13px;padding:7px 16px;letter-spacing:.04em}
+.step{display:flex;align-items:center;background:var(--blue);color:#fff;border-radius:8px;overflow:hidden}
+.step button{border:0;background:transparent;color:#fff;font-weight:800;font-size:16px;width:28px;height:32px}
+.step span{min-width:18px;text-align:center;font-weight:700;font-size:14px;font-variant-numeric:tabular-nums}
+.empty{padding:40px;text-align:center;color:var(--muted);background:var(--surface);border-radius:16px;border:1px dashed var(--line)}
+
+/* partner strip */
+.partner{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:760px){.partner{grid-template-columns:1fr}}
+.pcard{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:10px}
+.pcard h3{font-size:22px;font-weight:800}
+.pcard p{color:var(--muted)}
+.pcard .go{align-self:flex-start;margin-top:6px;border:0;background:var(--navy);color:#fff;border-radius:10px;padding:10px 18px;font-weight:700}
+:root[data-theme="dark"] .pcard .go{background:var(--blue)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .pcard .go{background:var(--blue)}}
+
+/* category page (PLP) */
+.crumbs{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);padding-block:16px 4px;flex-wrap:wrap}
+.crumbs a{color:var(--blue-ink);text-decoration:none;font-weight:600}
+.plp{display:grid;grid-template-columns:220px 1fr;background:var(--surface);border:1px solid var(--line);border-radius:18px;overflow:hidden;margin-block:10px 24px}
+.side{border-right:1px solid var(--line);display:flex;flex-direction:column;max-height:calc(100vh - 120px);overflow-y:auto;position:sticky;top:80px}
+.side a{display:flex;align-items:center;gap:10px;padding:10px 12px;text-decoration:none;color:var(--ink);font-size:14px;font-weight:500;border-left:4px solid transparent}
+.side a .ti{width:44px;height:44px;flex:none;border-radius:10px;background:var(--blue-soft);display:flex;align-items:center;justify-content:center}
+.side a .ti svg{width:72%;height:72%}
+.side a[aria-current="page"]{background:var(--blue-soft);border-left-color:var(--blue);font-weight:700}
+.pmain{min-width:0;display:flex;flex-direction:column}
+.ptop{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.ptop h1{font-size:22px;font-weight:800}
+.ptop label{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:8px}
+.ptop select{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;padding:7px 10px;font:600 13px var(--body)}
+.pmain .grid{padding:16px;background:var(--bg)}
+@media(max-width:700px){
+ .plp{grid-template-columns:84px 1fr;border-radius:14px}
+ .side a{flex-direction:column;gap:4px;padding:10px 4px;font-size:11px;text-align:center;line-height:1.2}
+ .side a .ti{width:52px;height:52px}
+ .pmain .grid{grid-template-columns:repeat(2,minmax(0,1fr));padding:10px;gap:10px}
+}
+.card a.pl{text-decoration:none;color:inherit;display:flex;flex-direction:column;gap:6px}
+/* product page (PDP) */
+.pdp{display:grid;grid-template-columns:1fr 1fr;gap:28px;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:24px;margin-block:10px 24px}
+@media(max-width:760px){.pdp{grid-template-columns:1fr;padding:16px}}
+.pdp .img{aspect-ratio:1/1;max-width:100%;border-radius:16px;display:flex;align-items:center;justify-content:center}
+.pdp .img svg{width:62%;height:62%}
+.pinfo{display:flex;flex-direction:column;gap:14px;min-width:0}
+.pinfo h1{font-size:clamp(24px,3vw,32px);font-weight:800;letter-spacing:-.01em}
+.pinfo .big{font:800 26px var(--display);font-variant-numeric:tabular-nums}
+.pinfo .big s{font:400 15px var(--body);color:var(--muted);margin-left:8px}
+.off{background:var(--blue);color:#fff;font-size:12px;font-weight:700;border-radius:6px;padding:2px 8px;margin-left:8px;vertical-align:middle}
+.pinfo .add{padding:12px 32px;font-size:15px;align-self:flex-start}
+.pinfo .step{align-self:flex-start}.pinfo .step button{width:40px;height:44px}.pinfo .step span{min-width:28px}
+.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.facts div{background:var(--bg);border-radius:12px;padding:10px;font-size:12.5px;color:var(--muted)}
+.facts b{display:block;color:var(--ink);font-size:13.5px}
+.similar h2{font-size:22px;font-weight:800;margin-bottom:12px}
+/* modal (login, checkout) */
+.modal{position:fixed;inset:0;z-index:70;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(10,12,30,.55)}
+.mbox{background:var(--surface);border-radius:20px;width:min(420px,100%);max-height:calc(100% - 32px);overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:14px;box-shadow:0 24px 60px rgba(0,0,0,.3)}
+.mbox h2{font-size:22px;font-weight:800}
+.mbox .x{align-self:flex-end;margin:-8px -8px -20px 0}
+.fld{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:var(--muted)}
+.fld input,.fld textarea{border:1.5px solid var(--line);background:var(--bg);color:var(--ink);border-radius:10px;padding:12px 14px;font:16px var(--body);width:100%}
+.fld input:focus,.fld textarea:focus{border-color:var(--blue);outline:none}
+.pre{display:flex;align-items:center;border:1.5px solid var(--line);border-radius:10px;background:var(--bg)}
+.pre span{padding:0 0 0 14px;color:var(--ink);font-weight:600}
+.pre input{border:0;background:transparent}
+.otp{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.otp input{text-align:center;font:800 22px var(--display);padding:12px 0}
+.demo{background:var(--blue-soft);color:var(--blue-ink);border-radius:10px;padding:10px 12px;font-size:13px}
+.err{color:#D0342C;font-size:13px;min-height:1em}
+.prim{border:0;border-radius:12px;background:var(--blue);color:#fff;padding:14px;font-weight:700;font-size:15px}
+.prim:disabled{background:var(--line);color:var(--muted)}
+.link{border:0;background:transparent;color:var(--blue-ink);font-weight:600;font-size:14px;padding:0;align-self:flex-start}
+.pm{display:flex;flex-direction:column;gap:8px}
+.pm label{display:flex;align-items:center;gap:12px;border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;font-weight:600;cursor:pointer}
+.pm label:has(input:checked){border-color:var(--blue);background:var(--blue-soft)}
+.pm small{display:block;font-weight:400;color:var(--muted);font-size:12px}
+.done{text-align:center;align-items:center}
+.tick{width:72px;height:72px;border-radius:50%;background:var(--ok);display:flex;align-items:center;justify-content:center}
+.olist{display:flex;flex-direction:column;gap:10px}
+.oitem{border:1px solid var(--line);border-radius:12px;padding:12px;font-size:14px;display:flex;justify-content:space-between;gap:10px}
+.oitem small{color:var(--muted);display:block}
+/* ===== revamp ===== */
+body{background:var(--bg)}
+.hero2{margin-top:18px;background:radial-gradient(120% 140% at 85% 20%,#2B6CF0 0%,#1D5BD8 35%,#14173D 100%);color:#fff;border-radius:28px;display:grid;grid-template-columns:1.2fr 1fr;align-items:center;gap:20px;overflow:hidden;position:relative;padding:44px 44px 40px}
+.hero2 h1{font-size:clamp(44px,7vw,84px);font-weight:800;letter-spacing:-.04em;line-height:.95;margin:14px 0 16px}
+.hero2 h1 em{font-style:normal;color:#FF8A65}
+.hero2 p{max-width:40ch;opacity:.88;font-size:16px}
+.live{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.12);border-radius:999px;padding:6px 12px;font-size:13px;font-weight:600}
+.live .dot{background:#5BD49A;box-shadow:0 0 0 4px rgba(91,212,154,.25)}
+.hacts{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+.hb1,.hb2{text-decoration:none;font-weight:700;border-radius:12px;padding:12px 20px;font-size:15px}
+.hb1{background:#FF8A65;color:#14173D}.hb2{background:rgba(255,255,255,.12);color:#fff;box-shadow:inset 0 0 0 1px rgba(255,255,255,.3)}
+.hstats{display:flex;gap:28px;margin:26px 0 0;flex-wrap:wrap}
+.hstats dt{font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.7}
+.hstats dd{margin:2px 0 0;font:700 17px var(--display)}
+.hart{position:relative;aspect-ratio:1/1;max-width:100%;width:100%;max-width:380px;justify-self:center}
+.hart .ring{width:62%;height:62%;position:absolute;left:19%;top:19%;filter:drop-shadow(0 20px 40px rgba(0,0,0,.35))}
+.hart .fl{position:absolute;width:26%;filter:drop-shadow(0 12px 18px rgba(0,0,0,.3))}
+.f1{left:0;top:6%}.f2{right:2%;top:0}.f3{left:6%;bottom:2%}.f4{right:0;bottom:8%}
+@media(prefers-reduced-motion:no-preference){.hart .fl{animation:bob 5s ease-in-out infinite}.f2{animation-delay:-1.2s!important}.f3{animation-delay:-2.4s!important}.f4{animation-delay:-3.6s!important}}
+@keyframes bob{50%{transform:translateY(-10px)}}
+@media(max-width:820px){.hero2{grid-template-columns:1fr;padding:28px 22px}.hart{max-width:240px;order:-1}}
+.fine{font-size:12px;color:var(--muted);margin:8px 4px 0}
+.promos{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:16px}
+@media(max-width:760px){.promos{grid-template-columns:1fr}}
+.promo{text-decoration:none;border-radius:18px;padding:18px 20px;display:flex;flex-direction:column;gap:4px;min-height:96px;justify-content:center;transition:transform .15s}
+.promo:hover{transform:translateY(-2px)}
+.promo b{font:800 19px var(--display)}.promo span{font-size:14px;opacity:.85}
+.pa{background:#E8EFFC;color:#14183A}.pb{background:#FFE7DE;color:#3A1A10}.pc{background:#FFF3C9;color:#3A2E05}
+.shead h2{font-size:26px}
+.card{position:relative;transition:box-shadow .2s,transform .2s;border-color:transparent;box-shadow:0 1px 2px rgba(20,24,58,.06),0 4px 14px rgba(20,24,58,.05)}
+.card:hover{box-shadow:0 10px 28px rgba(20,24,58,.12);transform:translateY(-2px)}
+.ribbon{position:absolute;top:12px;left:12px;z-index:1;background:#1D5BD8;color:#fff;font-size:11px;font-weight:800;border-radius:6px;padding:3px 7px}
+.heart{position:absolute;top:10px;right:10px;z-index:1;border:0;background:var(--surface);width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.12);color:var(--muted)}
+.heart[aria-pressed="true"]{color:#E5483A}
+.tabbar{display:none}
+@media(max-width:900px){
+ .tabbar{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;left:0;right:0;bottom:0;z-index:16;background:var(--surface);border-top:1px solid var(--line);padding:6px max(8px,env(safe-area-inset-right,0px)) max(6px,env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px))}
+ .tabbar a,.tabbar button{border:0;background:transparent;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;font-weight:600;color:var(--muted);text-decoration:none;padding:4px}
+ .tabbar .on{color:var(--blue-ink)}
+ .mobilecart{bottom:calc(64px + env(safe-area-inset-bottom,0px))}
+ footer{padding-bottom:64px}
+}
+.coupons{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;margin-bottom:24px}
+.coupon{background:var(--surface);border:1.5px dashed var(--blue);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:4px}
+.coupon b{font:800 18px var(--display);color:var(--blue-ink)}.coupon span{font-size:13px;color:var(--muted)}
+.code{align-self:flex-start;margin-top:6px;font:700 13px ui-monospace,monospace;background:var(--blue-soft);color:var(--blue-ink);border-radius:6px;padding:4px 8px;letter-spacing:.06em}
+.track{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:24px;display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-block:10px 24px}
+@media(max-width:760px){.track{grid-template-columns:1fr;padding:18px}}
+.tsteps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.tsteps li{display:grid;grid-template-columns:28px 1fr;gap:12px;padding-bottom:22px;position:relative}
+.tsteps li::before{content:"";position:absolute;left:13px;top:28px;bottom:0;width:2px;background:var(--line)}
+.tsteps li:last-child::before{display:none}
+.tsteps li.done::before{background:var(--blue)}
+.tsteps .b{width:28px;height:28px;border-radius:50%;border:2px solid var(--line);background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:13px;color:#fff}
+.tsteps .done .b{background:var(--blue);border-color:var(--blue)}
+.tsteps .now .b{border-color:var(--blue);box-shadow:0 0 0 5px var(--blue-soft)}
+.tsteps b{display:block}.tsteps small{color:var(--muted)}
+.mapbox{border-radius:14px;background:var(--blue-soft);min-height:220px;position:relative;overflow:hidden}
+.mapbox svg{width:100%;height:100%;position:absolute;inset:0}
+.addrs{display:flex;flex-direction:column;gap:8px}
+.addr2{display:flex;gap:10px;align-items:flex-start;border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;font-size:14px}
+.addr2 b{display:block;font-size:13px}
+.addr2 .del{margin-left:auto;border:0;background:transparent;color:#D0342C;font-weight:600;font-size:13px}
+.addr2:has(input:checked){border-color:var(--blue);background:var(--blue-soft)}
+.oitem .acts{display:flex;gap:12px;margin-top:6px}
+.empty b{display:block;color:var(--ink);font:800 18px var(--display);margin-bottom:4px}
+/* footer */
+footer{background:var(--navy);color:#fff;margin-top:40px}
+footer .wrap{padding-block:44px 28px;display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:28px}
+@media(max-width:820px){footer .wrap{grid-template-columns:1fr 1fr}}
+footer h4{font:700 15px var(--display);margin:0 0 10px}
+footer ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;font-size:14px;opacity:.8}
+footer .tag{opacity:.75;font-size:14px;margin-top:10px;max-width:32ch}
+footer .legal{grid-column:1/-1;border-top:1px solid rgba(255,255,255,.15);padding-top:18px;font-size:12px;opacity:.6}
+
+/* cart drawer */
+.scrim{position:fixed;inset:0;background:rgba(10,12,30,.5);z-index:40}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(420px,100%);background:var(--bg);z-index:50;display:flex;flex-direction:column;box-shadow:-12px 0 40px rgba(0,0,0,.2);padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);padding-right:env(safe-area-inset-right,0px)}
+.dhead{display:flex;justify-content:space-between;align-items:center;padding:16px 18px;background:var(--surface);border-bottom:1px solid var(--line)}
+.dhead h2{font-size:20px;font-weight:800}
+.x{border:0;background:var(--bg);color:var(--ink);width:34px;height:34px;border-radius:50%;font-size:18px}
+.dbody{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:12px}
+.box{background:var(--surface);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.toggle{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.toggle button{border:1.5px solid var(--line);background:var(--surface);color:var(--ink);border-radius:12px;padding:10px;text-align:left}
+.toggle button b{display:block;font:800 15px var(--display)}
+.toggle button small{color:var(--muted);font-size:12px}
+.toggle button[aria-pressed="true"]{border-color:var(--blue);background:var(--blue-soft)}
+.slots{display:flex;gap:6px;flex-wrap:wrap}
+.slots button{border:1.5px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:6px 12px;font-size:13px;font-weight:600}
+.slots button[aria-pressed="true"]{border-color:var(--blue);color:var(--blue-ink);background:var(--blue-soft)}
+.citem{display:grid;grid-template-columns:48px 1fr auto;gap:10px;align-items:center}
+.citem .img{width:48px;height:48px;border-radius:10px;display:flex;align-items:center;justify-content:center}
+.citem .img svg{width:80%;height:80%}
+.citem p{font-size:13.5px;font-weight:600;line-height:1.3}
+.citem small{color:var(--muted);font-size:12px}
+.bill .l{display:flex;justify-content:space-between;font-size:14px;font-variant-numeric:tabular-nums}
+.bill .l span:first-child{color:var(--muted)}
+.bill .tot{font-weight:800;font-size:16px;border-top:1px dashed var(--line);padding-top:10px}
+.bill .tot span:first-child{color:var(--ink)}
+.msg{font-size:13px;border-radius:10px;padding:10px 12px}
+.msg.warn{background:var(--blue-soft);color:var(--warn)}
+.msg.ok{background:var(--blue-soft);color:var(--ok)}
+.bar{height:6px;border-radius:3px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--blue)}
+.dfoot{padding:14px;background:var(--surface);border-top:1px solid var(--line);padding-bottom:max(14px,env(safe-area-inset-bottom,0px))}
+.pay{width:100%;border:0;border-radius:12px;background:var(--blue);color:#fff;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;font-weight:700;font-size:15px}
+.pay:disabled{background:var(--line);color:var(--muted);cursor:not-allowed}
+.toast{position:fixed;left:50%;bottom:max(24px,env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--navy);color:#fff;padding:12px 18px;border-radius:12px;z-index:60;font-size:14px;box-shadow:0 8px 24px rgba(0,0,0,.25);max-width:calc(100% - 32px)}
+.mobilecart{position:fixed;left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));bottom:max(12px,env(safe-area-inset-bottom,0px));z-index:15;display:none}
+@media(max-width:900px){.cartbtn{display:none}.mobilecart:not([hidden]){display:block}}
+.mobilecart button{width:100%;border:0;border-radius:14px;background:var(--blue);color:#fff;padding:14px 16px;display:flex;justify-content:space-between;font-weight:700;box-shadow:0 10px 30px rgba(29,91,216,.35)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <symbol id="mark" viewBox="0 0 64 64">
+    <mask id="mk"><rect width="64" height="64" fill="#fff"/><path d="M-2 25h16M-2 33h12M-2 41h8" stroke="#000" stroke-width="4" stroke-linecap="round"/></mask>
+    <circle cx="32" cy="32" r="30" fill="#1D5BD8" mask="url(#mk)"/>
+    <path d="M38 15v20a11 11 0 0 1-21 4.5" fill="none" stroke="#fff" stroke-width="7.5" stroke-linecap="round"/>
+    <path d="M45 21l6-6m0 0h-6.5m6.5 0v6.5" fill="none" stroke="#FF8A65" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+</defs></svg>
+
+<header>
+  <div class="wrap hbar">
+    <a class="logo" href="#" aria-label="JALGO home"><svg width="40" height="40"><use href="#mark"/></svg><b>JALGO</b></a>
+    <button class="addr" id="addrBtn" aria-label="Change delivery address"><strong id="etaHead">Quick in 10–30 min</strong><span id="addrLine">Navi Peth, Jalgaon ▾</span></button>
+    <label class="search" for="q"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      <input id="q" type="search" placeholder="Search Amul, atta, Parle-G, Surf Excel…" autocomplete="off"></label>
+    <a class="login" href="#offers" style="text-decoration:none">Offers</a><a class="login" href="#wishlist" style="text-decoration:none">Wishlist <span id="wc"></span></a><button class="login" id="loginBtn">Login</button>
+    <button class="cartbtn" id="cartBtn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" aria-hidden="true"><path d="M3 4h2l2.5 11h11L21 7H7"/><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/></svg><small id="cartLbl">My Cart</small></button>
+  </div>
+</header>
+
+<main class="wrap" id="top">
+ <div id="home">
+  <div class="hero2">
+    <div class="hcopy">
+      <button class="live" id="heroLoc" style="border:0;color:#fff;cursor:pointer"><i class="dot"></i><span>Now delivering in Jalgaon · Detect my location</span></button>
+      <h1>Everything.<br><em>Just Go.</em></h1>
+      <p>Groceries and daily needs from Jalgaon's trusted supermarkets. In minutes when you need it, in a slot when you plan it.</p>
+      <div class="hacts"><a class="hb1" href="#c-fresh">Start shopping</a><a class="hb2" href="#offers">See today's deals</a></div>
+      <dl class="hstats"><div><dt>Quick</dt><dd>10–30 min*</dd></div><div><dt>Scheduled</dt><dd>Free from ₹500</dd></div><div><dt>Min. order</dt><dd>₹200</dd></div></dl>
+    </div>
+    <div class="hart" aria-hidden="true">
+      <svg class="ring" viewBox="0 0 64 64"><use href="#mark"/></svg>
+      <img class="fl f1" src="img/banana.png" alt=""><img class="fl f2" src="img/glass_of_milk.png" alt=""><img class="fl f3" src="img/tomato.png" alt=""><img class="fl f4" src="img/sheaf_of_rice.png" alt="">
+    </div>
+  </div>
+  <p class="fine">*Quick is offered only where a nearby store and rider can make it on time.</p>
+  <div class="promos">
+    <a class="promo pa" href="#c-staples"><b>Monthly shop?</b><span>Schedule it. Free delivery from ₹500.</span></a>
+    <a class="promo pb" href="#c-dairy"><b>Morning dairy</b><span>Milk, curd and paneer for chai time.</span></a>
+    <a class="promo pc" href="#c-fruits"><b>Jalgaon bananas</b><span>From the banana capital of India.</span></a>
+  </div>
+
+
+  <section>
+    <div class="shead"><h2>Shop by category</h2><button id="allBtn" hidden>Show all</button></div>
+    <div class="cats" id="cats"></div>
+  </section>
+
+  <div id="rails"></div>
+ </div>
+ <div id="inner" hidden></div>
+ <div id="homeTail">
+  <section>
+    <div class="shead"><h2>Grow with JALGO</h2></div>
+    <div class="partner">
+      <div class="pcard"><h3>List your supermarket</h3><p>Reach new customers across Jalgaon. No joining fee, no listing fee, no subscription. A small commission only on completed orders, with fast settlements.</p><button class="go" data-toast="Partner sign-up opens soon. This is a preview site.">Partner with us</button></div>
+      <div class="pcard"><h3>Deliver with JALGO</h3><p>A fixed amount for every delivery plus extra for longer trips and Quick orders. Tips go 100% to you, with clear weekly payout statements.</p><button class="go" data-toast="Rider sign-up opens soon. This is a preview site.">Become a rider</button></div>
+    </div>
+  </section>
+ </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div><a class="logo" href="#top" style="color:#fff"><svg width="36" height="36"><use href="#mark"/></svg><b>JALGO</b></a>
+      <p class="tag">Just All Life, Go Online. Hyperlocal groceries and daily needs, starting in Jalgaon, Maharashtra.</p></div>
+    <div><h4>Shop</h4><ul><li>Fresh fruits &amp; vegetables</li><li>Dairy</li><li>Staples</li><li>Snacks &amp; drinks</li><li>Household</li></ul></div>
+    <div><h4>Company</h4><ul><li>About JALGO</li><li>Partner stores</li><li>Delivery partners</li><li>Careers</li></ul></div>
+    <div><h4>Help</h4><ul><li>Delivery &amp; fees</li><li>Cancellations</li><li>Refunds</li><li>Contact support</li></ul></div>
+    <p class="legal">© 2026 JALGO · Everything. Just Go. · Preview site: product names are real brands sold in Jalgaon, but prices are samples and images are illustrations, and ordering is not live yet. Product illustrations from Microsoft Fluent Emoji, MIT licence.</p>
+  </div>
+</footer>
+
+<nav class="tabbar" aria-label="Main">
+ <a href="#" data-tab="home"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Home</a>
+ <a href="#c-fresh" data-tab="c-"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>Categories</a>
+ <a href="#offers" data-tab="offers"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12l-8 8-9-9V3h8z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>Offers</a>
+ <a href="#wishlist" data-tab="wishlist"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20s-7-4.5-9-9a5 5 0 0 1 9-3 5 5 0 0 1 9 3c-2 4.5-9 9-9 9z"/></svg>Wishlist</a>
+ <button id="tabAcc"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/></svg>Account</button>
+</nav>
+<div class="mobilecart" id="mobileCart" hidden><button id="mobileCartBtn"><span id="mcL">0 items</span><span>View cart ›</span></button></div>
+
+<div class="scrim" id="scrim" hidden></div>
+<aside class="drawer" id="drawer" hidden aria-label="Your cart">
+  <div class="dhead"><h2>My cart</h2><button class="x" id="closeCart" aria-label="Close cart">×</button></div>
+  <div class="dbody" id="dbody"></div>
+  <div class="dfoot"><button class="pay" id="payBtn"><span id="payAmt">₹0</span><span id="payLbl">Proceed</span></button></div>
+</aside>
+<div class="toast" id="toast" hidden></div>
+<div class="modal" id="modal" hidden role="dialog" aria-modal="true"><div class="mbox" id="mbox"></div></div>
+
+<script>
+/* ---------- pricing config (pilot values from the JALGO plan; all adjustable) ---------- */
+const CFG={minOrder:200,quick:{delivery:50,handling:15},sched:{upto400:15,freeFrom:500,mid:null}};
+
+/* ---------- product art: simple drawn shapes, no photos ---------- */
+const ART={
+ milk:'<image href="img/glass_of_milk.png" x="2" y="2" width="60" height="60"/>',
+ curd:'<image href="img/bowl_with_spoon.png" x="2" y="2" width="60" height="60"/>',
+ paneer:'<image href="img/cheese_wedge.png" x="2" y="2" width="60" height="60"/>',
+ butter:'<image href="img/butter.png" x="2" y="2" width="60" height="60"/>',
+ tomato:'<image href="img/tomato.png" x="2" y="2" width="60" height="60"/>',
+ onion:'<image href="img/onion.png" x="2" y="2" width="60" height="60"/>',
+ potato:'<image href="img/potato.png" x="2" y="2" width="60" height="60"/>',
+ banana:'<image href="img/banana.png" x="2" y="2" width="60" height="60"/>',
+ apple:'<image href="img/red_apple.png" x="2" y="2" width="60" height="60"/>',
+ chilli:'<image href="img/hot_pepper.png" x="2" y="2" width="60" height="60"/>',
+ sack:'<image href="img/sheaf_of_rice.png" x="2" y="2" width="60" height="60"/>',
+ dal:'<image href="img/shallow_pan_of_food.png" x="2" y="2" width="60" height="60"/>',
+ oil:'<image href="img/jar.png" x="2" y="2" width="60" height="60"/>',
+ sugar:'<image href="img/salt.png" x="2" y="2" width="60" height="60"/>',
+ spice:'<image href="img/hot_pepper.png" x="2" y="2" width="60" height="60"/>',
+ chips:'<image href="img/popcorn.png" x="2" y="2" width="60" height="60"/>',
+ biscuit:'<image href="img/cookie.png" x="2" y="2" width="60" height="60"/>',
+ drink:'<image href="img/beverage_box.png" x="2" y="2" width="60" height="60"/>',
+ tea:'<image href="img/teacup_without_handle.png" x="2" y="2" width="60" height="60"/>',
+ oats:'<image href="img/cooked_rice.png" x="2" y="2" width="60" height="60"/>',
+ detergent:'<image href="img/bubbles.png" x="2" y="2" width="60" height="60"/>',
+ dish:'<image href="img/sponge.png" x="2" y="2" width="60" height="60"/>',
+ soap:'<image href="img/soap.png" x="2" y="2" width="60" height="60"/>',
+ paste:'<image href="img/toothbrush.png" x="2" y="2" width="60" height="60"/>',
+ egg:'<image href="img/egg.png" x="2" y="2" width="60" height="60"/>',
+ bread:'<image href="img/bread.png" x="2" y="2" width="60" height="60"/>'
+};
+const TINT={dairy:'#E8EFFC',fresh:'#EAF6EE',staples:'#FBF2E2',snacks:'#FDEDE7',breakfast:'#F3EFE6',household:'#E9F1FB',personal:'#FCEEF3',bakery:'#F8EEDF'};
+
+const CATS=[
+ ['fresh','Vegetables','tomato'],['fruits','Fruits','banana'],['dairy','Dairy & eggs','milk'],['staples','Atta, rice & dal','sack'],['oil','Oil, sugar & spices','oil'],
+ ['snacks','Snacks & biscuits','chips'],['drinks','Drinks','drink'],['breakfast','Breakfast & bakery','bread'],['household','Cleaning','detergent'],['personal','Personal care','soap']
+];
+/* example catalogue — sample prices for the preview */
+const P=[
+ [1,'Amul Taaza Toned Milk','500 ml',28,null,'dairy','milk'],
+ [2,'Amul Gold Full Cream Milk','500 ml',34,null,'dairy','milk'],
+ [3,'Gokul Full Cream Milk','500 ml',35,null,'dairy','milk'],
+ [4,'Amul Masti Dahi','400 g',35,null,'dairy','curd'],
+ [5,'Amul Malai Paneer','200 g',95,null,'dairy','paneer'],
+ [6,'Amul Butter','100 g',58,null,'dairy','butter'],
+ [7,'Amul Pure Ghee','500 ml',330,350,'dairy','butter'],
+ [8,'Farm Fresh White Eggs','6 pcs',48,54,'dairy','egg'],
+ [9,'Tomato (Local)','1 kg',32,40,'fresh','tomato'],
+ [10,'Onion (Nashik)','1 kg',38,null,'fresh','onion'],
+ [11,'Potato','1 kg',30,null,'fresh','potato'],
+ [12,'Green Chilli','100 g',10,null,'fresh','chilli'],
+ [13,'Jalgaon Banana (Shrimant)','1 dozen',48,null,'fruits','banana'],
+ [14,'Shimla Apple','4 pcs',120,140,'fruits','apple'],
+ [15,'Aashirvaad Shudh Chakki Atta','5 kg',255,289,'staples','sack'],
+ [16,'Fortune Chakki Fresh Atta','5 kg',240,270,'staples','sack'],
+ [17,'India Gate Basmati Rice Classic','1 kg',185,210,'staples','sack'],
+ [18,'Kolam Rice (Loose)','5 kg',340,null,'staples','sack'],
+ [19,'Tata Sampann Toor Dal','1 kg',175,195,'staples','dal'],
+ [20,'Tata Sampann Moong Dal','1 kg',160,180,'staples','dal'],
+ [21,'Rajdhani Besan','500 g',65,null,'staples','dal'],
+ [22,'Fortune Soya Health Refined Soyabean Oil','1 L',145,160,'oil','oil'],
+ [23,'Saffola Gold Oil','1 L',195,225,'oil','oil'],
+ [24,'Tata Salt','1 kg',28,null,'oil','sugar'],
+ [25,'Madhur Pure Sugar','1 kg',55,60,'oil','sugar'],
+ [26,'Everest Tikhalal Chilli Powder','100 g',48,null,'oil','spice'],
+ [27,'Everest Turmeric Powder','100 g',32,null,'oil','spice'],
+ [28,'MDH Garam Masala','100 g',85,null,'oil','spice'],
+ [29,'Parle-G Gold Biscuits','1 kg',140,null,'snacks','biscuit'],
+ [30,'Britannia Good Day Cashew','200 g',40,null,'snacks','biscuit'],
+ [31,'Sunfeast Dark Fantasy Choco Fills','75 g',40,null,'snacks','biscuit'],
+ [32,'Lay\'s India\'s Magic Masala','48 g',20,null,'snacks','chips'],
+ [33,'Haldiram\'s Aloo Bhujia','400 g',105,115,'snacks','chips'],
+ [34,'Kurkure Masala Munch','75 g',20,null,'snacks','chips'],
+ [35,'Tata Tea Gold','500 g',290,315,'drinks','tea'],
+ [36,'Bru Instant Coffee','100 g',190,null,'drinks','tea'],
+ [37,'Real Fruit Power Mixed Fruit Juice','1 L',120,135,'drinks','drink'],
+ [38,'Thums Up','750 ml',40,null,'drinks','drink'],
+ [39,'Kellogg\'s Corn Flakes Original','475 g',185,210,'breakfast','oats'],
+ [40,'Saffola Masala Oats Classic','500 g',165,185,'breakfast','oats'],
+ [41,'Maggi 2-Minute Masala Noodles','280 g (4 pack)',56,null,'breakfast','oats'],
+ [42,'Britannia 100% Whole Wheat Bread','400 g',55,null,'breakfast','bread'],
+ [43,'Surf Excel Easy Wash Detergent Powder','1 kg',140,155,'household','detergent'],
+ [44,'Tide Plus Double Power Detergent','1 kg',115,null,'household','detergent'],
+ [45,'Vim Dishwash Liquid Lemon','500 ml',115,125,'household','dish'],
+ [46,'Harpic Power Plus Toilet Cleaner','500 ml',105,null,'household','detergent'],
+ [47,'Lifebuoy Total 10 Soap','4 × 100 g',150,168,'personal','soap'],
+ [48,'Dettol Original Soap','4 × 75 g',190,210,'personal','soap'],
+ [49,'Colgate Strong Teeth Toothpaste','200 g',115,null,'personal','paste'],
+ [50,'Clinic Plus Strong & Long Shampoo','340 ml',210,240,'personal','soap']
+].map(([id,n,q,p,m,c,a])=>({id,n,q,p,m,c,a}));
+const RAILS=[['dairy','Dairy, bread & eggs',['dairy','breakfast']],['fresh','Fresh vegetables & fruits',['fresh','fruits']],['staples','Atta, rice, dal & oil',['staples','oil']],['snacks','Snacks & drinks',['snacks','drinks']],['household','Home & personal care',['household','personal']]];
+
+/* ---------- state ---------- */
+let cart={},mode='quick',slot='Evening',filter=null,query='';
+try{const s=JSON.parse(localStorage.getItem('jalgo-cart')||'{}');cart=s.cart||{};mode=s.mode||'quick'}catch(e){}
+let wish={};try{wish=JSON.parse(localStorage.getItem('jalgo-wish')||'{}')}catch(e){}
+const save=()=>{try{localStorage.setItem('jalgo-cart',JSON.stringify({cart,mode}))}catch(e){}};
+const $=id=>document.getElementById(id);
+const rs=n=>'₹'+n.toLocaleString('en-IN');
+const art=(p,s='')=>`<div class="img" style="background:${TINT[p.c]||TINT[{fruits:'fresh',oil:'staples',drinks:'snacks'}[p.c]]||'#EEF2FA'}"><svg viewBox="0 0 64 64" aria-hidden="true">${ART[p.a]}</svg></div>`;
+
+function btn(p){const n=cart[p.id]||0;return n?`<div class="step"><button data-dec="${p.id}" aria-label="Remove one ${p.n}">−</button><span>${n}</span><button data-inc="${p.id}" aria-label="Add one ${p.n}">+</button></div>`:`<button class="add" data-inc="${p.id}" aria-label="Add ${p.n}">ADD</button>`}
+function card(p){const off=p.m?Math.round((p.m-p.p)/p.m*100):0;return `<div class="card">${off?`<span class="ribbon">${off}% OFF</span>`:''}<button class="heart" data-wish="${p.id}" aria-pressed="${!!wish[p.id]}" aria-label="Save ${p.n} to wishlist"><svg width="16" height="16" viewBox="0 0 24 24" fill="${wish[p.id]?'currentColor':'none'}" stroke="currentColor" stroke-width="2.2"><path d="M12 20s-7-4.5-9-9a5 5 0 0 1 9-3 5 5 0 0 1 9 3c-2 4.5-9 9-9 9z"/></svg></button><a class="pl" href="#p-${p.id}">${art(p)}<span class="eta">⏱ ${mode==='quick'?'Quick':'Slot'}</span><h3>${p.n}</h3><span class="qty">${p.q}</span></a><div class="row"><span class="price">${rs(p.p)}${p.m?`<s>${rs(p.m)}</s>`:''}</span><span data-slot="${p.id}">${btn(p)}</span></div></div>`}
+
+function renderCats(){$('cats').innerHTML=CATS.map(([k,l,a])=>`<a class="cat" href="#c-${k}" style="text-decoration:none"><span class="tile"><svg viewBox="0 0 64 64" aria-hidden="true">${ART[a]}</svg></span><span>${l}</span></a>`).join('');$('allBtn').hidden=!filter&&!query}
+function renderRails(){
+ let html='';
+ if(filter||query){
+  const list=P.filter(p=>(!filter||p.c===filter)&&(!query||p.n.toLowerCase().includes(query)));
+  const t=query?`Results for “${query.replace(/[<>&]/g,'')}”`:CATS.find(c=>c[0]===filter)[1];
+  html=`<section><div class="shead"><h2>${t}</h2><span class="qty">${list.length} items</span></div>${list.length?`<div class="grid">${list.map(card).join('')}</div>`:`<div class="empty">No items match yet. Try “milk”, “atta” or “onion”.</div>`}</section>`;
+ } else {
+  html=RAILS.map(([k,t,cs])=>`<section><div class="shead"><h2>${t}</h2><a href="#c-${k}" style="color:var(--blue-ink);font-weight:700;text-decoration:none">See all ›</a></div><div class="rail">${P.filter(p=>cs.includes(p.c)).map(card).join('')}</div></section>`).join('');
+ }
+ $('rails').innerHTML=html;
+}
+
+function fees(sub){
+ if(mode==='quick')return{del:CFG.quick.delivery,hand:CFG.quick.handling,tbd:false};
+ if(sub>=CFG.sched.freeFrom)return{del:0,hand:0,tbd:false};
+ if(sub<=400)return{del:CFG.sched.upto400,hand:0,tbd:false};
+ return{del:CFG.sched.mid,hand:0,tbd:CFG.sched.mid==null};
+}
+function renderCart(){
+ const items=P.filter(p=>cart[p.id]);const count=items.reduce((a,p)=>a+cart[p.id],0);
+ const sub=items.reduce((a,p)=>a+p.p*cart[p.id],0);const mrp=items.reduce((a,p)=>a+(p.m||p.p)*cart[p.id],0);
+ const f=fees(sub);const total=sub+(f.del||0)+f.hand;const short=Math.max(0,CFG.minOrder-sub);
+ $('cartLbl').innerHTML=count?`${count} item${count>1?'s':''}<br>${rs(sub)}`:'My Cart';
+ $('mobileCart').hidden=!count;$('mcL').textContent=`${count} item${count>1?'s':''} · ${rs(sub)}`;
+ $('etaHead').textContent=mode==='quick'?'Quick in 10–30 min':`Scheduled · ${slot}`;
+ if(!count){$('dbody').innerHTML=`<div class="box" style="align-items:center;text-align:center;padding:36px 20px"><svg width="64" height="64"><use href="#mark"/></svg><h3 style="font-size:18px">Your cart is empty</h3><p class="qty">Add milk, atta, vegetables and more to get started.</p></div>`;$('payBtn').disabled=true;$('payAmt').textContent=rs(0);$('payLbl').textContent='Add items';return}
+ let freeMsg='';
+ if(mode==='sched'&&sub<CFG.sched.freeFrom){const pct=Math.min(100,sub/CFG.sched.freeFrom*100);freeMsg=`<div class="box"><p class="qty">Add ${rs(CFG.sched.freeFrom-sub)} more for free Scheduled delivery</p><div class="bar"><i style="width:${pct}%"></i></div></div>`}
+ $('dbody').innerHTML=`
+  <div class="box"><div class="toggle">
+   <button data-mode="quick" aria-pressed="${mode==='quick'}"><b>Quick</b><small>10–30 min where available</small></button>
+   <button data-mode="sched" aria-pressed="${mode==='sched'}"><b>Scheduled</b><small>Choose a slot</small></button></div>
+   ${mode==='sched'?`<div class="slots">${['Morning','Afternoon','Evening'].map(s=>`<button data-slotpick="${s}" aria-pressed="${slot===s}">${s}</button>`).join('')}</div>`:''}
+  </div>
+  ${freeMsg}
+  <div class="box">${items.map(p=>`<div class="citem">${art(p)}<div><p>${p.n}</p><small>${p.q} · ${rs(p.p)}</small></div><div data-slot="${p.id}">${btn(p)}</div></div>`).join('')}</div>
+  <div class="box bill"><h3 style="font-size:16px">Bill details</h3>
+   <div class="l"><span>Items total${mrp>sub?` <s style="font-size:12px">${rs(mrp)}</s>`:''}</span><span>${rs(sub)}</span></div>
+   <div class="l"><span>Delivery fee</span><span>${f.tbd?'To be confirmed':f.del===0?'Free':rs(f.del)}</span></div>
+   ${mode==='quick'?`<div class="l"><span>Handling fee</span><span>${rs(f.hand)}</span></div>`:''}
+   ${mrp>sub?`<div class="l"><span>You save</span><span style="color:var(--ok)">${rs(mrp-sub)}</span></div>`:''}
+   <div class="l tot"><span>To pay</span><span>${rs(total)}${f.tbd?' + delivery':''}</span></div>
+  </div>
+  ${short?`<p class="msg warn">Add ${rs(short)} more to reach the ₹${CFG.minOrder} minimum order.</p>`:`<p class="msg ok">Every fee is shown above before you pay. No hidden charges.</p>`}`;
+ $('payBtn').disabled=!!short;$('payAmt').textContent=rs(total);$('payLbl').textContent=short?`Minimum ₹${CFG.minOrder}`:'Proceed to pay ›';
+}
+function renderInner(){
+ const h=location.hash.slice(1);const inner=$('inner');
+ const isC=h.startsWith('c-')&&CATS.some(c=>c[0]===h.slice(2));const isP=h.startsWith('p-')&&P.some(p=>p.id==h.slice(2));
+ const isO=h==='offers',isW=h==='wishlist',tr=h.startsWith('track-')?orders.find(o=>o.id===h.slice(6)):null;
+ const sp=isC||isP||isO||isW||!!tr;$('home').hidden=sp;$('homeTail').hidden=sp;inner.hidden=!sp;
+ document.querySelectorAll('.tabbar [data-tab]').forEach(a=>{const t=a.dataset.tab;a.classList.toggle('on',t==='home'?!sp:h.startsWith(t)&&t!=='home')});
+ const wc=Object.keys(wish).length;$('wc').textContent=wc?`(${wc})`:'';
+ if(isO){const deals=P.filter(p=>p.m).sort((a,b)=>(b.m-b.p)/b.m-(a.m-a.p)/a.m);
+  inner.innerHTML=`<nav class="crumbs"><a href="#">Home</a>›<span>Offers</span></nav><div class="shead" style="margin-top:6px"><h2>Offers for you</h2></div>
+  <div class="coupons"><div class="coupon"><b>Free Scheduled delivery</b><span>On every Scheduled order of ₹500 or more.</span><span class="code">AUTO-APPLIED</span></div>
+  <div class="coupon"><b>First order offer</b><span>Launch offer for new customers. Details at launch.</span><span class="code">COMING SOON</span></div>
+  <div class="coupon"><b>Bulk staples savings</b><span>Lower prices on 5 kg atta and rice packs.</span><span class="code">SEE BELOW</span></div></div>
+  <div class="shead"><h2>Biggest price drops</h2><span class="qty">${deals.length} items below MRP</span></div><div class="grid">${deals.map(card).join('')}</div>`;return}
+ if(isW){const list=P.filter(p=>wish[p.id]);
+  inner.innerHTML=`<nav class="crumbs"><a href="#">Home</a>›<span>Wishlist</span></nav><div class="shead" style="margin-top:6px"><h2>Your wishlist</h2>${list.length?`<button id="wAll" style="border:0;background:var(--blue);color:#fff;border-radius:10px;padding:9px 14px;font-weight:700">Add all to cart</button>`:''}</div>
+  ${list.length?`<div class="grid">${list.map(card).join('')}</div>`:`<div class="empty"><b>Nothing saved yet</b>Tap the heart on any product to save it here for your next shop.</div>`}`;
+  const w=$('wAll');if(w)w.onclick=()=>{list.forEach(p=>cart[p.id]=(cart[p.id]||0)+1);refresh();toast(list.length+' items added to cart')};return}
+ if(tr){const steps=[['Order placed','We have your order'],['Packing','A nearby store is packing your items'],['On the way','Your JALGO rider is heading over'],['Delivered','Enjoy!']];
+  const el=(Date.now()-tr.at)/1000;const st=tr.method==='x'?0:Math.min(3,Math.floor(el/20));
+  inner.innerHTML=`<nav class="crumbs"><a href="#">Home</a>›<span>Track order</span></nav><div class="track"><div><p class="qty">Order ${tr.id} · ${tr.mode}</p><h2 style="font-size:28px;margin:6px 0 18px">${steps[st][0]}</h2>
+  <ol class="tsteps">${steps.map((x,i)=>`<li class="${i<st?'done':i===st?'now done':''}"><span class="b">${i<=st?'✓':''}</span><div><b>${x[0]}</b><small>${x[1]}</small></div></li>`).join('')}</ol>
+  <p class="demo">Demo tracking: status moves forward every 20 seconds.</p></div>
+  <div class="mapbox"><svg viewBox="0 0 300 220" preserveAspectRatio="xMidYMid slice"><g stroke="var(--line)" stroke-width="10" fill="none"><path d="M-10 60H310M-10 160H310M80-10V230M210-10V230"/></g><path d="M80 60V160H210" fill="none" stroke="#1D5BD8" stroke-width="4" stroke-dasharray="8 6"/><circle cx="80" cy="60" r="10" fill="#14173D"/><circle cx="210" cy="160" r="10" fill="#FF8A65"/><circle cx="${[80,80,145,210][st]}" cy="${[60,110,160,160][st]}" r="13" fill="#1D5BD8" stroke="#fff" stroke-width="3"/></svg></div></div>`;
+  clearTimeout(window._tt);if(st<3)window._tt=setTimeout(renderInner,5000);return}
+ if(isC){
+  const k=h.slice(2);const c=CATS.find(x=>x[0]===k);let list=P.filter(p=>p.c===k);
+  if(sort==='low')list=[...list].sort((a,b)=>a.p-b.p);else if(sort==='high')list=[...list].sort((a,b)=>b.p-a.p);else if(sort==='off')list=[...list].sort((a,b)=>((b.m||b.p)-b.p)/(b.m||b.p)-((a.m||a.p)-a.p)/(a.m||a.p));
+  inner.innerHTML=`<nav class="crumbs" aria-label="Breadcrumb"><a href="#">Home</a>›<span>${c[1]}</span></nav>
+  <div class="plp"><nav class="side" aria-label="Categories">${CATS.map(([kk,l,a])=>`<a href="#c-${kk}" ${kk===k?'aria-current="page"':''}><span class="ti"><svg viewBox="0 0 64 64" aria-hidden="true">${ART[a]}</svg></span>${l}</a>`).join('')}</nav>
+  <div class="pmain"><div class="ptop"><h1>${c[1]} <span class="qty" style="font:500 14px var(--body)">· ${list.length} items</span></h1>
+  <label for="sortSel">Sort by <select id="sortSel"><option value="rel">Relevance</option><option value="low">Price: low to high</option><option value="high">Price: high to low</option><option value="off">Biggest discount</option></select></label></div>
+  <div class="grid">${list.map(card).join('')}</div></div></div>`;
+  $('sortSel').value=sort;$('sortSel').onchange=e=>{sort=e.target.value;renderInner()};
+ } else if(isP){
+  const p=P.find(x=>x.id==h.slice(2));const c=CATS.find(x=>x[0]===p.c);const off=p.m?Math.round((p.m-p.p)/p.m*100):0;
+  inner.innerHTML=`<nav class="crumbs" aria-label="Breadcrumb"><a href="#">Home</a>›<a href="#c-${p.c}">${c[1]}</a>›<span>${p.n}</span></nav>
+  <div class="pdp">${art(p)}<div class="pinfo"><span class="eta">⏱ ${mode==='quick'?'Quick · 10–30 min where available':'Scheduled slot'}</span><h1>${p.n}</h1><span class="qty">${p.q}</span>
+   <div class="big">${rs(p.p)}${p.m?`<s>MRP ${rs(p.m)}</s><span class="off">${off}% OFF</span>`:''}</div><span class="qty" style="margin-top:-8px">Inclusive of all taxes</span>
+   <span data-slot="${p.id}">${btn(p)}</span>
+   <div class="facts"><div><b>Fresh stock</b>From a nearby Jalgaon store</div><div><b>No hidden fees</b>All charges shown at checkout</div><div><b>Easy returns</b>For damaged or wrong items</div></div>
+   <p class="qty">Sample price for the JALGO preview; final prices will come from the store's billing system. Illustration: Microsoft Fluent Emoji (MIT licence). Real listings will show brand, ingredients, shelf life and FSSAI details.</p></div></div>
+  <section class="similar"><h2>More in ${c[1]}</h2><div class="rail">${P.filter(x=>x.c===p.c&&x.id!==p.id).concat(P.filter(x=>x.c!==p.c).slice(0,4)).map(card).join('')}</div></section>`;
+ }
+}
+function refresh(){renderCats();renderRails();renderInner();renderCart();save()}
+let sort='rel';
+window.addEventListener('hashchange',()=>{sort='rel';renderInner();window.scrollTo(0,0)});
+
+/* ---------- events ---------- */
+document.addEventListener('click',e=>{
+ const t=e.target.closest('button');if(!t)return;
+ if(t.dataset.wish){const k=t.dataset.wish;if(wish[k])delete wish[k];else{wish[k]=1;toast('Saved to wishlist')}try{localStorage.setItem('jalgo-wish',JSON.stringify(wish))}catch(e){}refresh()}
+ else if(t.dataset.inc){cart[t.dataset.inc]=(cart[t.dataset.inc]||0)+1;refresh()}
+ else if(t.dataset.dec){const k=t.dataset.dec;cart[k]--;if(cart[k]<=0)delete cart[k];refresh()}
+ else if(t.dataset.cat){location.hash='c-'+t.dataset.cat}
+ else if(t.dataset.mode){mode=t.dataset.mode;refresh()}
+ else if(t.dataset.slotpick){slot=t.dataset.slotpick;refresh()}
+ else if(t.dataset.toast)toast(t.dataset.toast);
+});
+$('allBtn').onclick=()=>{filter=null;query='';$('q').value='';refresh()};
+$('q').addEventListener('input',e=>{if(location.hash)history.replaceState(null,'',location.pathname+location.search),renderInner();query=e.target.value.trim().toLowerCase();filter=null;renderCats();renderRails()});
+const open=()=>{$('drawer').hidden=false;$('scrim').hidden=false;$('closeCart').focus()};
+const close=()=>{$('drawer').hidden=true;$('scrim').hidden=true};
+$('cartBtn').onclick=open;$('mobileCartBtn').onclick=open;$('closeCart').onclick=close;$('scrim').onclick=close;
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){close();hideM&&(M.hidden=true)}});
+/* ---------- dummy login (demo OTP) + demo checkout ---------- */
+let user=null;try{user=JSON.parse(localStorage.getItem('jalgo-user')||'null')}catch(e){}
+let orders=[];try{orders=JSON.parse(localStorage.getItem('jalgo-orders')||'[]')}catch(e){}
+const store=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+const M=$('modal'),MB=$('mbox');let afterLogin=null,phone='',DEMO_OTP='';
+const showM=h=>{MB.innerHTML=`<button class="x" id="mx" aria-label="Close">×</button>`+h;M.hidden=false;$('mx').onclick=hideM;const f=MB.querySelector('input');f&&f.focus()};
+const hideM=()=>{M.hidden=true};
+M.addEventListener('click',e=>{if(e.target===M)hideM()});
+function paintUser(){$('loginBtn').textContent=user?('Hi, '+user.name.split(' ')[0]):'Login'}
+function loginStep1(){
+ showM(`<h2>Log in or sign up</h2><p class="qty">Enter your mobile number. We'll send a one-time code.</p>
+ <form id="f1" class="pm" novalidate><div class="fld"><label for="ph">Mobile number</label><div class="pre"><span>+91</span><input id="ph" inputmode="numeric" maxlength="10" placeholder="10-digit number" autocomplete="tel-national"></div></div>
+ <p class="err" id="e1"></p><button class="prim">Get OTP</button></form>
+ <p class="demo">Demo login: no SMS is sent. Any 10-digit number works.</p>`);
+ $('f1').onsubmit=e=>{e.preventDefault();const v=$('ph').value.trim();if(!/^[6-9]\d{9}$/.test(v)){$('e1').textContent='Enter a valid 10-digit Indian mobile number starting with 6–9.';return}phone=v;DEMO_OTP=String(Math.floor(1000+Math.random()*9000));loginStep2()};
+}
+function loginStep2(){
+ showM(`<h2>Enter OTP</h2><p class="qty">Sent to +91 ${phone.slice(0,5)} ${phone.slice(5)}</p>
+ <form id="f2" class="pm" novalidate><div class="otp">${[0,1,2,3].map(i=>`<input id="o${i}" inputmode="numeric" maxlength="1" aria-label="OTP digit ${i+1}">`).join('')}</div>
+ <p class="err" id="e2"></p><button class="prim">Verify</button></form>
+ <p class="demo">Demo OTP: <b>${DEMO_OTP}</b></p><button class="link" id="chg">Change number</button>`);
+ const ins=[0,1,2,3].map(i=>$('o'+i));
+ ins.forEach((el,i)=>{el.oninput=()=>{el.value=el.value.replace(/\D/g,'');if(el.value&&i<3)ins[i+1].focus()};el.onkeydown=e=>{if(e.key==='Backspace'&&!el.value&&i>0)ins[i-1].focus()}});
+ $('chg').onclick=loginStep1;
+ $('f2').onsubmit=e=>{e.preventDefault();const v=ins.map(x=>x.value).join('');if(v!==DEMO_OTP){$('e2').textContent='That code is incorrect. Check the demo OTP above.';return}
+  const known=(()=>{try{return JSON.parse(localStorage.getItem('jalgo-u-'+phone)||'null')}catch(e){return null}})();
+  if(known){user=known;finishLogin()}else loginStep3()};
+}
+function loginStep3(){
+ showM(`<h2>Welcome to JALGO</h2><p class="qty">Tell us your name to finish signing up.</p>
+ <form id="f3" class="pm" novalidate><div class="fld"><label for="nm">Full name</label><input id="nm" autocomplete="name" placeholder="e.g. Shree Mundade"></div><p class="err" id="e3"></p><button class="prim">Continue</button></form>`);
+ $('f3').onsubmit=e=>{e.preventDefault();const n=$('nm').value.trim();if(n.length<2){$('e3').textContent='Enter your name.';return}user={name:n,phone};store('jalgo-u-'+phone,user);finishLogin()};
+}
+function finishLogin(){store('jalgo-user',user);paintUser();toast('Logged in as '+user.name);hideM();if(afterLogin){const f=afterLogin;afterLogin=null;f()}}
+function saveUser(){store('jalgo-user',user);store('jalgo-u-'+user.phone,user)}
+function account(){if(user.addr&&!user.addrs){user.addrs=[{label:'Home',text:user.addr}];saveUser()}
+ const mine=orders.filter(o=>o.phone===user.phone);
+ showM(`<h2>${user.name}</h2><p class="qty">+91 ${user.phone}</p><h3 style="font-size:16px">My orders</h3>
+ <div class="olist">${mine.length?mine.map(o=>`<div class="oitem"><div><b>${o.id}</b><small>${o.items} items · ${o.mode} · ${o.method}</small><small>${new Date(o.at).toLocaleString('en-IN')}</small><div class="acts"><button class="link" data-track="${o.id}">Track</button>${o.cart?`<button class="link" data-re="${o.id}">Reorder</button>`:''}</div></div><b>${rs(o.total)}</b></div>`).join(''):'<p class="qty">No orders yet.</p>'}</div>
+ <h3 style="font-size:16px">Saved addresses</h3><div class="addrs">${(user.addrs||[]).map((a,i)=>`<div class="addr2"><div><b>${a.label}</b>${a.text.replace(/</g,'&lt;')}</div><button class="del" data-del="${i}">Delete</button></div>`).join('')||'<p class="qty">No saved addresses.</p>'}</div>
+ <form id="fa" class="pm" novalidate><div class="fld"><label for="al">Add address</label><input id="al" placeholder="Label, e.g. Home or Office"></div><div class="fld"><textarea id="at" rows="2" placeholder="House no., street, area, Jalgaon"></textarea></div><button class="link">+ Save address</button></form>
+ <button class="link" id="lo" style="color:#D0342C">Log out</button>`);
+ MB.querySelectorAll('[data-track]').forEach(b=>b.onclick=()=>{hideM();location.hash='track-'+b.dataset.track});
+ MB.querySelectorAll('[data-re]').forEach(b=>b.onclick=()=>{const o=orders.find(x=>x.id===b.dataset.re);Object.entries(o.cart).forEach(([k,v])=>cart[k]=(cart[k]||0)+v);refresh();hideM();open();toast('Items from '+o.id+' added to cart')});
+ MB.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{user.addrs.splice(+b.dataset.del,1);saveUser();account()});
+ $('fa').onsubmit=e=>{e.preventDefault();const l=$('al').value.trim()||'Address',x=$('at').value.trim();if(x.length<8){toast('Enter the full address');return}(user.addrs=user.addrs||[]).push({label:l,text:x});saveUser();account()};
+ $('lo').onclick=()=>{user=null;try{localStorage.removeItem('jalgo-user')}catch(e){}paintUser();hideM();toast('Logged out')};
+}
+$('loginBtn').onclick=()=>user?account():loginStep1();
+$('tabAcc').onclick=()=>user?account():loginStep1();
+function totals(){const items=P.filter(p=>cart[p.id]);const sub=items.reduce((a,p)=>a+p.p*cart[p.id],0);const f=fees(sub);return{items,count:items.reduce((a,p)=>a+cart[p.id],0),sub,f,total:sub+(f.del||0)+f.hand}}
+function checkout(){
+ if(!user){afterLogin=checkout;close();loginStep1();return}
+ close();const t=totals();
+ if(t.f.tbd){toast('The Scheduled fee for ₹401–₹499 is not set yet. Switch to Quick or add items to reach ₹500.');return}
+ if(user.addr&&!user.addrs){user.addrs=[{label:'Home',text:user.addr}]}
+ showM(`<h2>Checkout</h2>
+ <form id="fc" class="pm" novalidate>
+ <div class="fld"><span>Deliver to</span></div><div class="addrs">${(user.addrs||[]).map((x,i)=>`<label class="addr2"><input type="radio" name="ads" value="${i}" ${i===0?'checked':''}><div><b>${x.label}</b>${x.text.replace(/</g,'&lt;')}</div></label>`).join('')}
+ <label class="addr2"><input type="radio" name="ads" value="new" ${(user.addrs||[]).length?'':'checked'}><div style="flex:1"><b>New address</b><textarea id="ad" rows="2" placeholder="House no., street, area, Jalgaon" style="width:100%;margin-top:6px;border:1.5px solid var(--line);border-radius:8px;padding:8px;background:var(--bg);color:var(--ink);font:15px var(--body)"></textarea></div></label></div>
+ <div class="fld"><span>Payment method</span></div>
+ <div class="pm" role="radiogroup">
+  <label><input type="radio" name="pm" value="UPI" checked><span>UPI<small>GPay, PhonePe, Paytm or any UPI app</small></span></label>
+  <label><input type="radio" name="pm" value="Card"><span>Debit or credit card</span></label>
+  <label><input type="radio" name="pm" value="Cash on delivery"><span>Cash on delivery</span></label>
+ </div>
+ <div class="bill box" style="padding:0;gap:6px"><div class="l"><span>Items (${t.count})</span><span>${rs(t.sub)}</span></div><div class="l"><span>Delivery</span><span>${t.f.del?rs(t.f.del):'Free'}</span></div>${t.f.hand?`<div class="l"><span>Handling</span><span>${rs(t.f.hand)}</span></div>`:''}<div class="l tot"><span>To pay</span><span>${rs(t.total)}</span></div></div>
+ <p class="err" id="ec"></p><button class="prim" id="placeBtn">Pay ${rs(t.total)}</button></form>
+ <p class="demo">Demo checkout: no money is charged. The live app will open the Razorpay payment window here.</p>`);
+ $('fc').onsubmit=e=>{e.preventDefault();const pick=MB.querySelector('input[name=ads]:checked').value;let ad;if(pick==='new'){ad=$('ad').value.trim();if(ad.length<8){$('ec').textContent='Enter your full delivery address.';return}(user.addrs=user.addrs||[]).push({label:'Address '+(user.addrs.length+1),text:ad});saveUser()}else ad=user.addrs[+pick].text;
+  const method=MB.querySelector('input[name=pm]:checked').value;const b=$('placeBtn');b.disabled=true;b.textContent=method==='Cash on delivery'?'Placing order…':'Processing payment…';
+  placeOrder(method,ad,t).then(id=>{
+   orders.unshift({id,phone:user.phone,cart:{...cart},items:t.count,total:t.total,mode:mode==='quick'?'Quick':'Scheduled · '+slot,method,at:Date.now()});store('jalgo-orders',orders);
+   cart={};refresh();
+   showM(`<div class="done pm" style="align-items:center;text-align:center"><span class="tick"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></span>
+   <h2>Order placed</h2><p class="qty">Order ${id} · ${rs(t.total)} · ${method}</p><p>${mode==='quick'?'A nearby store is packing your order. Estimated 10–30 minutes.':'Your order will arrive in the '+slot.toLowerCase()+' slot.'}</p>
+   <p class="demo">${LIVE?'Saved in ERPNext staging as '+id+'. Nothing will be delivered.':'Demo order. Nothing will be delivered.'}</p><button class="prim" id="trk" style="width:100%">Track order</button><button class="link" id="ok2" style="align-self:center">Continue shopping</button></div>`);
+   $('ok2').onclick=hideM;$('trk').onclick=()=>{hideM();location.hash='track-'+id}}).catch(err=>{b.disabled=false;b.textContent='Try again';$('ec').textContent=err.message||String(err)})};
+}
+$('payBtn').onclick=checkout;
+paintUser();
+/* ---------- live mode: when served by the JALGO Frappe app, use ERPNext data ---------- */
+let LIVE=false;
+const GKEY={'Dairy & Eggs':'dairy','Vegetables':'fresh','Fruits':'fruits','Atta, Rice & Dal':'staples','Oil, Sugar & Spices':'oil','Snacks & Biscuits':'snacks','Beverages':'drinks','Breakfast & Bakery':'breakfast','Cleaning':'household','Personal Care':'personal'};
+const serverMsg=j=>{try{return JSON.parse(JSON.parse(j._server_messages)[0]).message.replace(/<[^>]+>/g,'')}catch(e){return j.exception||'Something went wrong. Try again.'}};
+function placeOrder(method,ad,t){
+ if(!LIVE)return new Promise(r=>setTimeout(()=>r('JLG'+Date.now().toString().slice(-8)),1400));
+ const items=Object.entries(cart).map(([code,qty])=>({code,qty}));
+ const pos=loc&&loc.lat?loc:{lat:21.0077,lng:75.5626};
+ return fetch('/api/method/jalgo.api.place_order',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},
+  body:JSON.stringify({items,mode:mode==='quick'?'Quick':'Scheduled',slot:mode==='quick'?null:slot,lat:pos.lat,lng:pos.lng,phone:user.phone,name:user.name,address:ad,payment_method:method==='Cash on delivery'?'Cash on Delivery':method})})
+  .then(r=>r.json()).then(j=>{if(!j.message||j.exc_type)throw new Error(serverMsg(j));t.total=j.message.grand_total;return j.message.order});
+}
+(async()=>{
+ try{
+  const r=await fetch('/api/method/jalgo.api.catalogue',{headers:{Accept:'application/json'}});
+  if(!r.ok)throw 0;const j=await r.json();if(!Array.isArray(j.message)||!j.message.length)throw 0;
+  const art=Object.fromEntries(P.map(p=>[p.n,p.a]));
+  P.splice(0,P.length,...j.message.map(x=>({id:x.code,n:x.name,q:x.pack,p:x.price,m:x.mrp||null,c:GKEY[x.group]||'staples',a:art[x.name]||'sack',oos:!x.in_stock})));
+  LIVE=true;cart={};document.title='JALGO · Live (ERPNext staging)';
+  const b=document.createElement('div');b.textContent='Live: products, prices and orders come from ERPNext staging';b.style.cssText='background:#1E8A5A;color:#fff;text-align:center;font:600 12px var(--body);padding:4px';document.body.prepend(b);
+ }catch(e){if(!Object.keys(cart).length){cart={1:2,9:1,15:1}}}
+ refresh();
+})();
+/* ---------- location detector ---------- */
+const JLG={lat:21.0077,lng:75.5626};const SERVICE_KM=12;
+const AREAS=['Navi Peth','Jilha Peth','Shivaji Nagar','Ring Road','Ganesh Colony','Khote Nagar','Pimprala','Mehrun','MJ College area','MIDC'];
+let loc=null;try{loc=JSON.parse(localStorage.getItem('jalgo-loc')||'null')}catch(e){}
+function paintLoc(){if(loc)$('addrLine').textContent=loc.label+' ▾'}
+const km=(a,b)=>{const r=x=>x*Math.PI/180,R=6371,dl=r(b.lat-a.lat),dg=r(b.lng-a.lng);const h=Math.sin(dl/2)**2+Math.cos(r(a.lat))*Math.cos(r(b.lat))*Math.sin(dg/2)**2;return 2*R*Math.asin(Math.sqrt(h))};
+function setLoc(l){loc=l;store('jalgo-loc',l);paintLoc();hideM();toast('Delivering to '+l.label)}
+function locModal(msg){
+ showM(`<h2>Where should we deliver?</h2>
+ <button class="prim" id="detect" style="display:flex;align-items:center;justify-content:center;gap:10px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>Detect my current location</button>
+ <p class="err" id="le" role="status">${msg||''}</p>
+ <div class="fld"><label for="ls">Or search your area in Jalgaon</label><input id="ls" placeholder="e.g. Ring Road, Pimprala" autocomplete="off"></div>
+ <div class="addrs" id="la"></div>
+ ${user&&(user.addrs||[]).length?`<h3 style="font-size:15px">Saved addresses</h3><div class="addrs">${user.addrs.map((a,i)=>`<button class="addr2" data-sv="${i}" style="text-align:left;background:var(--surface);color:var(--ink)"><div><b>${a.label}</b>${a.text.replace(/</g,'&lt;')}</div></button>`).join('')}</div>`:''}`);
+ const list=q=>{$('la').innerHTML=AREAS.filter(a=>a.toLowerCase().includes(q.toLowerCase())).map(a=>`<button class="addr2" data-ar="${a}" style="text-align:left;background:var(--surface);color:var(--ink)"><div><b>${a}</b>Jalgaon, Maharashtra</div></button>`).join('')||'<p class="qty">We don\'t deliver there yet. JALGO is starting in Jalgaon only.</p>'};
+ list('');$('ls').oninput=e=>list(e.target.value);
+ MB.querySelectorAll('[data-sv]').forEach(b=>b.onclick=()=>setLoc({label:user.addrs[+b.dataset.sv].label+', Jalgaon'}));
+ $('la').onclick=e=>{const b=e.target.closest('[data-ar]');if(b)setLoc({label:b.dataset.ar+', Jalgaon'})};
+ $('detect').onclick=()=>{
+  const le=$('le'),d=$('detect');
+  if(!navigator.geolocation){le.textContent='Location isn\'t available in this browser. Pick your area below.';return}
+  d.disabled=true;d.lastChild.textContent='Detecting…';le.textContent='';
+  let doneF=false;const fail=m=>{if(doneF)return;doneF=true;d.disabled=false;d.lastChild.textContent='Detect my current location';le.textContent=m};
+  const to=setTimeout(()=>fail('Couldn\'t get your location. Pick your area below.'),10000);
+  try{navigator.geolocation.getCurrentPosition(pos=>{clearTimeout(to);if(doneF)return;doneF=true;
+    const here={lat:pos.coords.latitude,lng:pos.coords.longitude};const dist=km(here,JLG);
+    if(dist<=SERVICE_KM)setLoc({label:'Current location, Jalgaon',lat:here.lat,lng:here.lng});
+    else{d.disabled=false;d.lastChild.textContent='Detect my current location';le.textContent=`You're about ${Math.round(dist)} km from Jalgaon. We only deliver in Jalgaon for now.`}
+   },err=>{clearTimeout(to);fail(err.code===1?'Location permission was blocked. Pick your area below, or allow location in your browser settings.':'Couldn\'t get your location. Pick your area below.')},{enableHighAccuracy:true,timeout:9000,maximumAge:60000})}
+  catch(e){clearTimeout(to);fail('Location isn\'t available here. Pick your area below.')}
+ };
+}
+$('addrBtn').onclick=()=>locModal();$('heroLoc').onclick=()=>locModal();
+paintLoc();
+let tt;function toast(m){const el=$('toast');el.textContent=m;el.hidden=false;clearTimeout(tt);tt=setTimeout(()=>el.hidden=true,2800)}
+
+/* sample cart so the drawer shows a working bill on first open */
+
+</script>

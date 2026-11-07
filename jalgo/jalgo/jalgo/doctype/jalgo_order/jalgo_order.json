@@ -1,0 +1,288 @@
+{
+ "actions": [],
+ "allow_bulk_edit": 1,
+ "allow_rename": 1,
+ "autoname": "JORD-.#####",
+ "creation": "2026-11-07 13:29:11.185381",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "customer",
+  "customer_phone",
+  "order_datetime",
+  "delivery_mode",
+  "slot",
+  "status",
+  "col_a",
+  "fulfilment_location",
+  "distance_km",
+  "delivery_address",
+  "latitude",
+  "longitude",
+  "sec_items",
+  "items",
+  "sec_bill",
+  "subtotal",
+  "delivery_fee",
+  "handling_fee",
+  "discount",
+  "tip",
+  "grand_total",
+  "col_b",
+  "payment_method",
+  "payment_status",
+  "commission_amount",
+  "sales_invoice",
+  "cancel_reason",
+  "is_demo",
+  "delivery_job"
+ ],
+ "fields": [
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Customer",
+   "options": "Customer",
+   "reqd": 1
+  },
+  {
+   "fieldname": "customer_phone",
+   "fieldtype": "Data",
+   "label": "Customer Phone"
+  },
+  {
+   "default": "now",
+   "fieldname": "order_datetime",
+   "fieldtype": "Datetime",
+   "label": "Order Datetime",
+   "reqd": 1
+  },
+  {
+   "fieldname": "delivery_mode",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Delivery Mode",
+   "options": "Quick\nScheduled",
+   "reqd": 1
+  },
+  {
+   "fieldname": "slot",
+   "fieldtype": "Select",
+   "label": "Slot",
+   "options": "\nMorning\nAfternoon\nEvening"
+  },
+  {
+   "default": "Confirmed",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "options": "Pending Payment\nConfirmed\nAllocated\nPicking\nOut for Delivery\nDelivered\nCancelled\nRefunded"
+  },
+  {
+   "fieldname": "col_a",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "fulfilment_location",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Fulfilment Location",
+   "options": "JALGO Fulfilment Location"
+  },
+  {
+   "fieldname": "distance_km",
+   "fieldtype": "Float",
+   "label": "Distance Km",
+   "precision": "2"
+  },
+  {
+   "fieldname": "delivery_address",
+   "fieldtype": "Small Text",
+   "label": "Delivery Address"
+  },
+  {
+   "fieldname": "latitude",
+   "fieldtype": "Float",
+   "label": "Latitude",
+   "precision": "6"
+  },
+  {
+   "fieldname": "longitude",
+   "fieldtype": "Float",
+   "label": "Longitude",
+   "precision": "6"
+  },
+  {
+   "fieldname": "sec_items",
+   "fieldtype": "Section Break",
+   "label": "Items"
+  },
+  {
+   "fieldname": "items",
+   "fieldtype": "Table",
+   "label": "Items",
+   "options": "JALGO Order Item",
+   "reqd": 1
+  },
+  {
+   "fieldname": "sec_bill",
+   "fieldtype": "Section Break",
+   "label": "Bill (computed on the server)"
+  },
+  {
+   "fieldname": "subtotal",
+   "fieldtype": "Currency",
+   "label": "Subtotal",
+   "read_only": 1
+  },
+  {
+   "fieldname": "delivery_fee",
+   "fieldtype": "Currency",
+   "label": "Delivery Fee",
+   "read_only": 1
+  },
+  {
+   "fieldname": "handling_fee",
+   "fieldtype": "Currency",
+   "label": "Handling Fee",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "discount",
+   "fieldtype": "Currency",
+   "label": "Discount"
+  },
+  {
+   "default": "0",
+   "fieldname": "tip",
+   "fieldtype": "Currency",
+   "label": "Tip"
+  },
+  {
+   "fieldname": "grand_total",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Grand Total",
+   "read_only": 1
+  },
+  {
+   "fieldname": "col_b",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "UPI",
+   "fieldname": "payment_method",
+   "fieldtype": "Select",
+   "label": "Payment Method",
+   "options": "UPI\nCard\nCash on Delivery"
+  },
+  {
+   "default": "Unpaid",
+   "fieldname": "payment_status",
+   "fieldtype": "Select",
+   "label": "Payment Status",
+   "options": "Unpaid\nPaid\nRefunded"
+  },
+  {
+   "fieldname": "commission_amount",
+   "fieldtype": "Currency",
+   "label": "JALGO Commission",
+   "read_only": 1
+  },
+  {
+   "fieldname": "sales_invoice",
+   "fieldtype": "Link",
+   "label": "Sales Invoice",
+   "options": "Sales Invoice",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cancel_reason",
+   "fieldtype": "Small Text",
+   "label": "Cancel Reason"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_demo",
+   "fieldtype": "Check",
+   "label": "Is Demo",
+   "read_only": 1
+  },
+  {
+   "fieldname": "delivery_job",
+   "fieldtype": "Link",
+   "label": "Delivery Job",
+   "options": "JALGO Delivery Job",
+   "read_only": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-11-07 13:41:40.550600",
+ "modified_by": "Administrator",
+ "module": "Jalgo",
+ "name": "JALGO Order",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "JALGO Ops",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "JALGO Store",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "JALGO Finance",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

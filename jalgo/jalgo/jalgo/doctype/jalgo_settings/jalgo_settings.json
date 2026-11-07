@@ -1,0 +1,206 @@
+{
+ "actions": [],
+ "allow_bulk_edit": 1,
+ "creation": "2026-11-07 13:28:51.871316",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "company",
+  "selling_price_list",
+  "delivery_item",
+  "handling_item",
+  "sec_c",
+  "min_order_value",
+  "quick_delivery_fee",
+  "quick_handling_fee",
+  "quick_max_km",
+  "col1",
+  "scheduled_fee_upto_400",
+  "scheduled_free_from",
+  "scheduled_mid_fee",
+  "scheduled_mid_fee_decided",
+  "sec_r",
+  "rider_base_payout",
+  "rider_quick_incentive",
+  "rider_per_km_beyond_5",
+  "payout_bands",
+  "sec_cost",
+  "gateway_fee_percent",
+  "packaging_cost_per_order"
+ ],
+ "fields": [
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company"
+  },
+  {
+   "fieldname": "selling_price_list",
+   "fieldtype": "Link",
+   "label": "Selling Price List",
+   "options": "Price List"
+  },
+  {
+   "fieldname": "delivery_item",
+   "fieldtype": "Link",
+   "label": "Delivery Fee Item",
+   "options": "Item"
+  },
+  {
+   "fieldname": "handling_item",
+   "fieldtype": "Link",
+   "label": "Handling Fee Item",
+   "options": "Item"
+  },
+  {
+   "fieldname": "sec_c",
+   "fieldtype": "Section Break",
+   "label": "Customer Pricing (pilot values, configurable)"
+  },
+  {
+   "default": "200",
+   "fieldname": "min_order_value",
+   "fieldtype": "Currency",
+   "label": "Min Order Value"
+  },
+  {
+   "default": "50",
+   "fieldname": "quick_delivery_fee",
+   "fieldtype": "Currency",
+   "label": "Quick Delivery Fee"
+  },
+  {
+   "default": "15",
+   "fieldname": "quick_handling_fee",
+   "fieldtype": "Currency",
+   "label": "Quick Handling Fee"
+  },
+  {
+   "default": "3",
+   "fieldname": "quick_max_km",
+   "fieldtype": "Float",
+   "label": "Quick Max Distance (km)"
+  },
+  {
+   "fieldname": "col1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "15",
+   "fieldname": "scheduled_fee_upto_400",
+   "fieldtype": "Currency",
+   "label": "Scheduled Fee (orders up to \u20b9400)"
+  },
+  {
+   "default": "500",
+   "fieldname": "scheduled_free_from",
+   "fieldtype": "Currency",
+   "label": "Scheduled Free Delivery From"
+  },
+  {
+   "fieldname": "scheduled_mid_fee",
+   "fieldtype": "Currency",
+   "label": "Scheduled Fee \u20b9401\u2013\u20b9499 (blank = undecided, checkout blocked)"
+  },
+  {
+   "fieldname": "sec_r",
+   "fieldtype": "Section Break",
+   "label": "Rider Payouts (Option B)"
+  },
+  {
+   "default": "20",
+   "fieldname": "rider_base_payout",
+   "fieldtype": "Currency",
+   "label": "Rider Base Payout"
+  },
+  {
+   "default": "5",
+   "fieldname": "rider_quick_incentive",
+   "fieldtype": "Currency",
+   "label": "Rider Quick Incentive"
+  },
+  {
+   "default": "7",
+   "fieldname": "rider_per_km_beyond_5",
+   "fieldtype": "Currency",
+   "label": "Per km beyond 5 km"
+  },
+  {
+   "fieldname": "payout_bands",
+   "fieldtype": "Table",
+   "label": "Payout Bands",
+   "options": "JALGO Payout Band"
+  },
+  {
+   "fieldname": "sec_cost",
+   "fieldtype": "Section Break",
+   "label": "Cost Assumptions for Contribution (demo estimates)"
+  },
+  {
+   "default": "2",
+   "fieldname": "gateway_fee_percent",
+   "fieldtype": "Percent",
+   "label": "Payment Gateway Fee %"
+  },
+  {
+   "default": "6",
+   "fieldname": "packaging_cost_per_order",
+   "fieldtype": "Currency",
+   "label": "Packaging Cost Per Order"
+  },
+  {
+   "default": "0",
+   "fieldname": "scheduled_mid_fee_decided",
+   "fieldtype": "Check",
+   "label": "\u20b9401\u2013\u20b9499 fee decided (unticked = checkout blocked for this band)"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2026-11-07 13:41:40.797535",
+ "modified_by": "Administrator",
+ "module": "Jalgo",
+ "name": "JALGO Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "JALGO Ops",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "JALGO Finance",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -1,0 +1,146 @@
+{
+ "actions": [],
+ "allow_bulk_edit": 1,
+ "allow_rename": 1,
+ "autoname": "field:location_name",
+ "creation": "2026-11-07 13:28:51.982369",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "location_name",
+  "location_type",
+  "warehouse",
+  "supplier",
+  "is_open",
+  "latitude",
+  "longitude",
+  "picking_capacity_per_hour",
+  "service_radius_km"
+ ],
+ "fields": [
+  {
+   "fieldname": "location_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Location Name",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "default": "Partner Store",
+   "fieldname": "location_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Location Type",
+   "options": "Partner Store\nDark Store",
+   "reqd": 1
+  },
+  {
+   "fieldname": "warehouse",
+   "fieldtype": "Link",
+   "label": "Warehouse",
+   "options": "Warehouse",
+   "reqd": 1
+  },
+  {
+   "fieldname": "supplier",
+   "fieldtype": "Link",
+   "label": "Partner (Supplier)",
+   "options": "Supplier"
+  },
+  {
+   "default": "1",
+   "fieldname": "is_open",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Is Open"
+  },
+  {
+   "fieldname": "latitude",
+   "fieldtype": "Float",
+   "label": "Latitude",
+   "precision": "6"
+  },
+  {
+   "fieldname": "longitude",
+   "fieldtype": "Float",
+   "label": "Longitude",
+   "precision": "6"
+  },
+  {
+   "default": "20",
+   "fieldname": "picking_capacity_per_hour",
+   "fieldtype": "Int",
+   "label": "Picking Capacity Per Hour"
+  },
+  {
+   "default": "6",
+   "fieldname": "service_radius_km",
+   "fieldtype": "Float",
+   "label": "Service Radius Km"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-11-07 13:28:51.982369",
+ "modified_by": "Administrator",
+ "module": "Jalgo",
+ "name": "JALGO Fulfilment Location",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "JALGO Ops",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "JALGO Store",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "JALGO Finance",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}
