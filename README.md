@@ -94,3 +94,10 @@ Scripts were run in this sandbox only (with a proxy setup removed from these cop
 
 ## Known limitations
 Guest checkout identifies customers by phone only (production needs OTP-verified login). Straight-line distance, not route distance. Rider assignment is round-robin. No stock reservation hold yet (stock is checked at allocation; it is deducted at invoice). Partner settlement and payout statement documents are not built yet. GST via India Compliance is not set up.
+
+
+## JALGO POS (`jalgo_pos/`)
+Counter POS for Shubhendra Provision: Frappe app with a Vue 3 screen at `/jalgo-pos`, running on ERPNext 16.
+Billing, held bills, estimates, credit, returns, shifts, back office with live ERPNext reports, GRN by Template,
+transfers, wastage, barcode stickers with Rate Card, roles, offline billing and Razorpay UPI.
+See [`jalgo_pos/README.md`](jalgo_pos/README.md) to install. Screenshots in `screenshots/pos/`. Release candidate `v1.0.0-rc1`.

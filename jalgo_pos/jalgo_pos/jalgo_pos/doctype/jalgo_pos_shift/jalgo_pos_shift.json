@@ -1,0 +1,174 @@
+{
+ "actions": [],
+ "allow_bulk_edit": 1,
+ "allow_rename": 1,
+ "autoname": "format:SHIFT-{YY}-{#####}",
+ "creation": "2026-11-07 17:55:52.755591",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "cashier",
+  "pos_profile",
+  "status",
+  "opened_at",
+  "opening_cash",
+  "cb1",
+  "closed_at",
+  "bills",
+  "sales_total",
+  "returns_total",
+  "sb",
+  "cash_sales",
+  "upi_sales",
+  "card_sales",
+  "credit_sales",
+  "cb2",
+  "expected_cash",
+  "counted_cash",
+  "difference"
+ ],
+ "fields": [
+  {
+   "fieldname": "cashier",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Cashier",
+   "options": "User",
+   "reqd": 1
+  },
+  {
+   "fieldname": "pos_profile",
+   "fieldtype": "Link",
+   "label": "POS Profile",
+   "options": "POS Profile"
+  },
+  {
+   "default": "Open",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Open\nClosed"
+  },
+  {
+   "fieldname": "opened_at",
+   "fieldtype": "Datetime",
+   "label": "Opened at"
+  },
+  {
+   "fieldname": "opening_cash",
+   "fieldtype": "Currency",
+   "label": "Opening cash"
+  },
+  {
+   "fieldname": "cb1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "closed_at",
+   "fieldtype": "Datetime",
+   "label": "Closed at"
+  },
+  {
+   "fieldname": "bills",
+   "fieldtype": "Int",
+   "label": "Bills"
+  },
+  {
+   "fieldname": "sales_total",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Sales total"
+  },
+  {
+   "fieldname": "returns_total",
+   "fieldtype": "Currency",
+   "label": "Returns total"
+  },
+  {
+   "fieldname": "sb",
+   "fieldtype": "Section Break",
+   "label": "Cash count"
+  },
+  {
+   "fieldname": "cash_sales",
+   "fieldtype": "Currency",
+   "label": "Cash sales"
+  },
+  {
+   "fieldname": "upi_sales",
+   "fieldtype": "Currency",
+   "label": "UPI sales"
+  },
+  {
+   "fieldname": "card_sales",
+   "fieldtype": "Currency",
+   "label": "Card sales"
+  },
+  {
+   "fieldname": "credit_sales",
+   "fieldtype": "Currency",
+   "label": "Credit (udhaar) sales"
+  },
+  {
+   "fieldname": "cb2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "expected_cash",
+   "fieldtype": "Currency",
+   "label": "Expected cash in drawer"
+  },
+  {
+   "fieldname": "counted_cash",
+   "fieldtype": "Currency",
+   "label": "Counted cash"
+  },
+  {
+   "fieldname": "difference",
+   "fieldtype": "Currency",
+   "label": "Difference"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-11-07 17:55:52.755591",
+ "modified_by": "Administrator",
+ "module": "JALGO POS",
+ "name": "JALGO POS Shift",
+ "naming_rule": "Expression (old style)",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales User",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

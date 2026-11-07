@@ -1,0 +1,88 @@
+{
+ "actions": [],
+ "allow_bulk_edit": 1,
+ "creation": "2026-11-07 17:55:52.444036",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "max_cashier_discount",
+  "max_manager_discount",
+  "manager_pin",
+  "require_shift",
+  "accept_barcode_in_name",
+  "warn_not_found",
+  "rate_card"
+ ],
+ "fields": [
+  {
+   "default": "5",
+   "fieldname": "max_cashier_discount",
+   "fieldtype": "Percent",
+   "label": "Max discount a cashier can give (%)"
+  },
+  {
+   "default": "20",
+   "fieldname": "max_manager_discount",
+   "fieldtype": "Percent",
+   "label": "Max discount with manager PIN (%)"
+  },
+  {
+   "description": "4\u20136 digits. Needed for bigger discounts, returns and voids.",
+   "fieldname": "manager_pin",
+   "fieldtype": "Password",
+   "label": "Manager PIN"
+  },
+  {
+   "default": "1",
+   "fieldname": "require_shift",
+   "fieldtype": "Check",
+   "label": "Cashier must open a shift before billing"
+  },
+  {
+   "default": "1",
+   "fieldname": "accept_barcode_in_name",
+   "fieldtype": "Check",
+   "label": "Accept barcode in Item Name"
+  },
+  {
+   "default": "1",
+   "fieldname": "warn_not_found",
+   "fieldtype": "Check",
+   "label": "Warn when item not found"
+  },
+  {
+   "description": "Digit-to-letter codes for purchase prices on stickers. Edit from the POS Barcode Printing screen.",
+   "fieldname": "rate_card",
+   "fieldtype": "Long Text",
+   "label": "Rate Card (JSON)",
+   "read_only": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2026-11-07 18:11:10.222288",
+ "modified_by": "Administrator",
+ "module": "JALGO POS",
+ "name": "JALGO POS Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}
